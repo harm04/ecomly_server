@@ -12,6 +12,7 @@ const userSchema = Schema({
   country: String,
   resetPasswordOTP: Number,
   resetPasswordOTPExpiry: Date,
+  cart:[{type:Schema.Types.ObjectId,ref:'CartProduct'}],
   isAdmin: { type: Boolean, default: false },
   wishList: [
     {

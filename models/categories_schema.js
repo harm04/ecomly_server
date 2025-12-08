@@ -4,7 +4,7 @@ const categoriesSchema = Schema({
   name: { type: String, required: true },
   color: { type: String, default: "#000000" },
   image: { type: String, required: true },
-  markedForDeletion: { type: bollean, default: false },
+  markedForDeletion: { type: Boolean, default: false },
 });
 
 categoriesSchema.set("toObject", { virtuals: true });

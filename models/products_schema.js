@@ -13,14 +13,14 @@ const productSchema = Schema({
   reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
   numberOfReviews: { type: Number, default: 0 },
   sizes: [{ type: String }],
-  Category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
-  genderAgeCategory: { type: String, enum: ["men", "women", "unisex", kids] },
+  category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
+  genderAgeCategory: { type: String, enum: ["men", "women", "unisex", "kids"] },
   countInStock: { type: Number, required: true, min: 0, max: 255 },
   dateAdded: { type: Date, default: Date.now },
 });
 
 //pre-save hook
-producatSchema.pre("save", async function (next) {
+productSchema.pre("save", async function (next) {
   if (this.reviews.length > 0) {
     await this.populate("reviews");
     const totalrating = this.reviews.reduce(

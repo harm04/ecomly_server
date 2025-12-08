@@ -21,10 +21,16 @@ app.use(errorHandler);
 const authRouter = require("./routes/auth_route");
 const usersRouter = require("./routes/users_route");
 const adminRouter = require("./routes/admin_routes");
+const categoriesRouter = require("./routes/categories_routes");
+const productsRouter = require("./routes/products_routes");
 
 app.use(`${API}/`, authRouter);
 app.use(`${API}/users`, usersRouter);
 app.use(`${API}/admin`, adminRouter);
+app.use(`${API}/categories`, categoriesRouter);
+app.use(`${API}/products`, productsRouter);
+app.use("/public", express.static(__dirname + "/public"));
+require("./helpers/cron_jobs");
 
 mongoose
   .connect(env.MONGODB_CONNECTION_STRING)
