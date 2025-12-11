@@ -5,6 +5,7 @@ const userSchema = Schema({
   email: { type: String, required: true, trim: true },
   phone: { type: String, required: true, trim: true },
   passwordHash: { type: String, required: true },
+  paymentCustomerId: String,
   street: String,
   appartment: String,
   city: String,
@@ -12,7 +13,7 @@ const userSchema = Schema({
   country: String,
   resetPasswordOTP: Number,
   resetPasswordOTPExpiry: Date,
-  cart:[{type:Schema.Types.ObjectId,ref:'CartProduct'}],
+  cart: [{ type: Schema.Types.ObjectId, ref: "CartProduct" }],
   isAdmin: { type: Boolean, default: false },
   wishList: [
     {
