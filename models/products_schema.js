@@ -1,4 +1,4 @@
-const { schema, model, Schema } = require("mongoose");
+const { Schema, model } = require("mongoose");
 const { Category } = require("./categories_schema");
 const { text } = require("body-parser");
 
@@ -31,7 +31,7 @@ productSchema.pre("save", async function (next) {
     this.rating = parseFloat((totalrating / this.reviews.length).toFixed(1));
     this.numberOfReviews = this.reviews.length;
   }
-  next();
+  next;
 });
 
 productSchema.index({ name: text, description: text });
