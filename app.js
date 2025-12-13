@@ -12,13 +12,18 @@ const app = express();
 const env = process.env;
 const API = env.API_URL;
 
+app.use(
+  cors({
+    origin: "*", // Allow all origins for testing
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
-app.use(cors());
 app.use(authJwt());
 app.use(authorizePostRequest);
 app.use(errorHandler);
-// app.options("/*", cors());
 
 const authRouter = require("./routes/auth_route");
 const usersRouter = require("./routes/users_route");

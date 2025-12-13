@@ -53,7 +53,7 @@ exports.login = async function (req, res) {
         id: user.id,
         isAdmin: user.isAdmin,
       },
-      process.env.ACESS_TOKEN_SECRET,
+      process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "24h" }
     );
 

@@ -47,6 +47,20 @@ const orderSchema = Schema({
   totalPrice: Number,
   user: { type: Schema.Types.ObjectId, ref: "User" },
   dateOrdered: { type: Date, default: Date.now },
+   paymentDetails: {
+    razorpayOrderId: { type: String },
+    razorpayPaymentId: { type: String },
+    razorpaySignature: { type: String },
+    paymentStatus: { 
+      type: String, 
+      enum: ["pending", "completed", "failed"],
+      default: "pending"
+    },
+    receipt: { type: String },
+    paidAt: { type: Date },
+    errorDescription: { type: String },
+    errorCode: { type: String }
+  },
 });
 
 orderSchema.set("toObject", { virtuals: true });

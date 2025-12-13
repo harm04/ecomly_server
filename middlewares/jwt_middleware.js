@@ -4,7 +4,7 @@ const { Token } = require("../models/token_schema");
 function authJwt() {
   const API = process.env.API_URL;
   return expjwt({
-    secret: process.env.ACESS_TOKEN_SECRET,
+    secret: process.env.ACCESS_TOKEN_SECRET,
     algorithms: ["HS256"],
     isRevoked: isRevoked,
   }).unless({
@@ -17,6 +17,14 @@ function authJwt() {
       `${API}/forget-password/`,
       `${API}/reset-password`,
       `${API}/reset-password/`,
+      // Checkout routes that don't need auth
+      `${API}/checkout/verify-payment`,
+      `${API}/checkout/payment-failure`,
+      // NOTE: create-order SHOULD require auth, so don't add it here
+      // Product viewing routes
+      `${API}/products`,
+      `${API}/products/`,
+      { url: new RegExp(`${API}/products/.*`), methods: ["GET"] },
     ],
   });
 }
