@@ -457,7 +457,7 @@ exports.verifyPayment = async function (req, res) {
  */
 exports.paymentFailure = async function (req, res) {
   try {
-    console.log("❌ Processing payment failure...");
+    console.log("Processing payment failure...");
 
     const { razorpay_order_id, error_description, error_code } = req.body;
 
@@ -484,7 +484,7 @@ exports.paymentFailure = async function (req, res) {
       }
 
       await order.save();
-      console.log("✅ Order marked as failed:", order._id);
+      console.log("Order marked as failed:", order._id);
     }
 
     return res.status(200).json({
@@ -494,7 +494,7 @@ exports.paymentFailure = async function (req, res) {
       errorCode: error_code,
     });
   } catch (error) {
-    console.error("❌ Payment failure handling error:", error);
+    console.error("Payment failure handling error:", error);
     return res.status(500).json({
       success: false,
       message: "Error handling payment failure",
@@ -533,7 +533,7 @@ exports.getOrder = async function (req, res) {
       order: order,
     });
   } catch (error) {
-    console.error("❌ Get order error:", error);
+    console.error("Get order error:", error);
     return res.status(500).json({
       success: false,
       message: "Error fetching order",
@@ -542,104 +542,3 @@ exports.getOrder = async function (req, res) {
   }
 };
 
-// ===================================
-// DEBUG & UTILITY FUNCTIONS
-// ===================================
-
-/**
- * Debug function to check recent orders (development only)
- */
-exports.debugOrders = async function (req, res) {
-  try {
-    const orders = await Order.find({})
-      .sort({ dateOrdered: -1 })
-      .limit(5)
-      .populate("orderItems")
-      .populate("user", "name email");
-
-    const ordersData = orders.map((order) => ({
-      _id: order._id,
-      status: order.status,
-      dateOrdered: order.dateOrdered,
-      paymentDetails: order.paymentDetails,
-      orderItems: order.orderItems,
-      user: order.user,
-      totalPrice: order.totalPrice,
-    }));
-
-    res.json({
-      success: true,
-      count: ordersData.length,
-      orders: ordersData,
-    });
-  } catch (error) {
-    console.error("❌ Debug orders error:", error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-};
-
-/**
- * Manual stock test function (development only)
- */
-exports.manualStockTest = async function (req, res) {
-  try {
-    const { productId, quantity } = req.body;
-
-    if (!productId || !quantity) {
-      return res.status(400).json({
-        success: false,
-        message: "Product ID and quantity are required",
-      });
-    }
-
-    console.log(
-      `🔧 Manual stock test: productId=${productId}, quantity=${quantity}`
-    );
-
-    // Get current stock
-    const beforeUpdate = await Product.findById(productId);
-    if (!beforeUpdate) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-    }
-
-    console.log("Stock before:", beforeUpdate.countInStock);
-
-    // Convert to number if string
-    let currentStock = beforeUpdate.countInStock;
-    if (typeof currentStock === "string") {
-      currentStock = parseInt(currentStock) || 0;
-    }
-
-    // Calculate new stock
-    const newStock = Math.max(0, currentStock - quantity);
-
-    // Update stock
-    const result = await Product.findByIdAndUpdate(
-      productId,
-      { countInStock: newStock },
-      { new: true }
-    );
-
-    console.log("Stock after:", result?.countInStock);
-
-    res.json({
-      success: true,
-      productName: beforeUpdate.name,
-      before: beforeUpdate.countInStock,
-      after: result?.countInStock,
-      decreased: quantity,
-    });
-  } catch (error) {
-    console.error("❌ Manual stock test error:", error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-};

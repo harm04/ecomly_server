@@ -39,7 +39,7 @@ const orderSchema = Schema({
       "shipped",
       "delivered",
       "cancelled",
-      "ou-for-delivery",
+      "out-for-delivery",
       "expired",
       "on-hold",
     ],

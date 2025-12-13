@@ -31,6 +31,7 @@ const adminRouter = require("./routes/admin_routes");
 const categoriesRouter = require("./routes/categories_routes");
 const productsRouter = require("./routes/products_routes");
 const checkoutRouter = require("./routes/checkout_routes");
+const ordersRouter = require("./routes/orders_routes");
 
 app.use(`${API}/`, authRouter);
 app.use(`${API}/users`, usersRouter);
@@ -38,6 +39,7 @@ app.use(`${API}/admin`, adminRouter);
 app.use(`${API}/categories`, categoriesRouter);
 app.use(`${API}/products`, productsRouter);
 app.use(`${API}/checkout`, checkoutRouter);
+app.use(`${API}/orders`, ordersRouter);
 app.use("/public", express.static(__dirname + "/public"));
 require("./helpers/cron_jobs");
 

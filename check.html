@@ -1,78 +1,746 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Razorpay Payment Test</title>
+    <title>Ecomly Store - Checkout</title>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        max-width: 600px;
-        margin: 50px auto;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
         padding: 20px;
       }
-      button {
-        background-color: #667eea;
+
+      /* Header */
+      .header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      .header h1 {
+        color: #333;
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        text-align: center;
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      /* Main content */
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+      }
+
+      .card h3 {
+        color: #333;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .icon {
+        font-size: 1.8rem;
+      }
+
+      /* Product showcase */
+      .product-showcase {
+        grid-column: span 2;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .product-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .product-card:hover {
+        transform: scale(1.05);
+      }
+
+      .product-image {
+        width: 100%;
+        height: 150px;
+        background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        font-size: 3rem;
+        color: #999;
+      }
+
+      /* Buttons */
+      .btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         padding: 15px 30px;
         border: none;
-        border-radius: 5px;
+        border-radius: 50px;
         cursor: pointer;
         font-size: 16px;
-        margin: 10px 5px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
       }
-      button:hover {
-        background-color: #5a6fd8;
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
       }
-      button:disabled {
-        background-color: #ccc;
+
+      .btn:disabled {
+        background: #ccc;
         cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
       }
-      #result {
-        margin-top: 20px;
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+      }
+
+      .btn-secondary:hover {
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+      }
+
+      /* Forms */
+      input[type="text"],
+      input[type="number"],
+      select {
+        width: 100%;
         padding: 15px;
-        border-radius: 5px;
-        background-color: #f8f9fa;
-      }
-      .error {
-        color: red;
-      }
-      .success {
-        color: green;
-      }
-      .info {
-        color: blue;
-      }
-      .order-details {
-        background: #e3f2fd;
-        padding: 10px;
         margin: 10px 0;
-        border-radius: 5px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      input[type="text"]:focus,
+      input[type="number"]:focus,
+      select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      /* Results */
+      #result {
+        margin-top: 30px;
+        padding: 25px;
+        border-radius: 15px;
+        font-weight: 500;
+        animation: fadeIn 0.5s ease;
+      }
+
+      .success {
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+        color: white;
+      }
+
+      .error {
+        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        color: white;
+      }
+
+      .info {
+        background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+        color: white;
+      }
+
+      .order-details {
+        background: rgba(255, 255, 255, 0.95);
+        color: #333;
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 10px;
+        border-left: 5px solid #667eea;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .loading {
+        animation: pulse 2s infinite;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+
+        .product-showcase {
+          grid-column: span 1;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .container {
+          padding: 10px;
+        }
+      }
+
+      /* Home Screen Styles */
+      .home-screen {
+        display: none;
+        text-align: center;
+      }
+
+      .success-animation {
+        font-size: 8rem;
+        color: #4caf50;
+        animation: pulse 2s infinite;
+        margin-bottom: 30px;
+      }
+
+      .navigation-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 40px;
+      }
+
+      .nav-card {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-decoration: none;
+        color: #333;
+        transition: transform 0.3s ease;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-card:hover {
+        transform: translateY(-5px);
+        text-decoration: none;
+        color: #667eea;
+      }
+
+      .nav-card-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .countdown {
+        font-size: 1.2rem;
+        color: #666;
+        margin-top: 20px;
       }
     </style>
   </head>
   <body>
-    <h1>Razorpay Payment Test</h1>
+    <div class="container">
+      <!-- Main Checkout Screen -->
+      <div id="checkout-screen">
+        <!-- Header -->
+        <div class="header">
+          <h1>🛒 Ecomly Store</h1>
+          <p>Premium Shopping Experience</p>
+        </div>
 
-    <div>
-      <h3>Create Fresh Order & Pay</h3>
-      <button onclick="createAndPay()">Create New Order & Pay</button>
+        <!-- Product Showcase -->
+        <div class="product-showcase">
+          <h3><span class="icon">🛍️</span>Featured Products</h3>
+          <div class="product-grid">
+            <div class="product-card">
+              <div class="product-image">👕</div>
+              <h4>Sweater T-Shirt</h4>
+              <p>₹33.45</p>
+              <button
+                class="btn"
+                onclick="selectProduct('6936db601607ea71b8059c99', 'Sweater T-Shirt', 33.45)"
+              >
+                Add to Cart
+              </button>
+            </div>
+            <div class="product-card">
+              <div class="product-image">🌬️</div>
+              <h4>Breatheable T-Shirt</h4>
+              <p>₹23.78</p>
+              <button
+                class="btn"
+                onclick="selectProduct('6936ddaa1607ea71b8059ca0', 'Breatheable T-Shirt', 23.78)"
+              >
+                Add to Cart
+              </button>
+            </div>
+            <div class="product-card">
+              <div class="product-image">🛒</div>
+              <h4>Bundle Deal</h4>
+              <p>₹50.00</p>
+              <button class="btn" onclick="addBundleDeal()">Add Bundle</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+          <!-- Shopping Cart -->
+          <div class="card">
+            <h3><span class="icon">🛒</span>Shopping Cart</h3>
+            <div id="cart-items">
+              <p style="color: #999; text-align: center; padding: 40px 0">
+                Your cart is empty. Add products to get started!
+              </p>
+            </div>
+            <div
+              id="cart-total"
+              style="
+                display: none;
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 2px solid #eee;
+              "
+            >
+              <h4>Total: ₹<span id="total-amount">0.00</span></h4>
+            </div>
+          </div>
+
+          <!-- Shipping Address -->
+          <div class="card">
+            <h3><span class="icon">📍</span>Shipping Address</h3>
+            <input
+              type="text"
+              id="address"
+              placeholder="Street Address"
+              value="123 Test Street"
+            />
+            <input type="text" id="city" placeholder="City" value="Mumbai" />
+            <input
+              type="text"
+              id="postalCode"
+              placeholder="Postal Code"
+              value="400001"
+            />
+            <select id="country">
+              <option value="India">India</option>
+              <option value="USA">USA</option>
+              <option value="UK">UK</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Checkout Actions -->
+        <div class="card">
+          <h3><span class="icon">💳</span>Checkout Options</h3>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap">
+            <button
+              class="btn"
+              onclick="createAndPay()"
+              id="checkout-btn"
+              disabled
+            >
+              🚀 Create Order & Pay
+            </button>
+            <button class="btn btn-secondary" onclick="clearCart()">
+              🗑️ Clear Cart
+            </button>
+          </div>
+          <div
+            style="
+              margin-top: 20px;
+              padding: 15px;
+              background: #f8f9fa;
+              border-radius: 10px;
+              font-size: 14px;
+              color: #666;
+            "
+          >
+            <strong>Test Card:</strong> 4111 1111 1111 1111 |
+            <strong>CVV:</strong> Any 3 digits | <strong>Expiry:</strong> Any
+            future date
+          </div>
+        </div>
+
+        <!-- Result Display -->
+        <div id="result"></div>
+      </div>
+
+      <!-- Success Home Screen -->
+      <div id="home-screen" class="home-screen">
+        <div class="card">
+          <div class="success-animation">✅</div>
+          <h1 style="color: #4caf50; margin-bottom: 20px">
+            Payment Successful!
+          </h1>
+          <p style="font-size: 1.2rem; color: #666; margin-bottom: 30px">
+            Thank you for your purchase! Your order has been confirmed and will
+            be processed shortly.
+          </p>
+
+          <div id="order-summary" class="order-details">
+            <!-- Order details will be populated here -->
+          </div>
+
+          <div class="navigation-cards">
+            <a href="#" class="nav-card" onclick="continueShopping()">
+              <span class="nav-card-icon">🛍️</span>
+              <h3>Continue Shopping</h3>
+              <p>Browse more products</p>
+            </a>
+
+            <a href="#" class="nav-card" onclick="viewOrders()">
+              <span class="nav-card-icon">📋</span>
+              <h3>My Orders</h3>
+              <p>Track your purchases</p>
+            </a>
+
+            <a href="#" class="nav-card" onclick="shareOrder()">
+              <span class="nav-card-icon">🔗</span>
+              <h3>Share</h3>
+              <p>Tell your friends</p>
+            </a>
+          </div>
+
+          <div class="countdown">
+            <p>
+              Redirecting to shop in
+              <span id="countdown-timer">10</span> seconds...
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div id="result"></div>
 
     <script>
       const API_BASE = "http://localhost:3000/api/v1";
       const JWT_TOKEN =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5M2Q0ODExOGI2MTg5MTQyZTA3YWU5ZCIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NjU2MzMxODYsImV4cCI6MTc2NTcxOTU4Nn0.trP35DQ4sJnQdvIlRUZB5uZ-4-1pLsPe_scj6Nq9Ej4"; // REPLACE WITH ACTUAL TOKEN
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5M2Q0ODExOGI2MTg5MTQyZTA3YWU5ZCIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NjU2NTQ2ODcsImV4cCI6MTc2NTc0MTA4N30.ZD44Obv3O2p44JInqYvJ_TTU6GefjAcBhYP_5Cwmzls";
 
-      async function createAndPay() {
+      // Shopping cart state
+      let cart = [];
+      let totalAmount = 0;
+
+      // Real product data from your database
+      const PRODUCTS = {
+        "6936db601607ea71b8059c99": {
+          name: "Sweater T-Shirt",
+          description: "Wear a cozy t-shirt",
+          price: 33.45,
+          stock: 40,
+          image:
+            "https://0.0.0.0:3000/public/uploads/t_shirt-1701904525342.png",
+        },
+        "6936ddaa1607ea71b8059ca0": {
+          name: "Breatheable T-Shirt",
+          description: "Cool summer t-shirt",
+          price: 23.78,
+          stock: 90,
+          image:
+            "https://0.0.0.0:3000/public/uploads/t_shirt-1701906140809.png",
+        },
+      };
+
+      // Initialize app
+      document.addEventListener("DOMContentLoaded", function () {
+        testServerConnection();
+        updateCartDisplay();
+        loadProductData();
+      });
+
+      // Load and display real product data
+      async function loadProductData() {
         try {
-          document.getElementById("result").innerHTML =
-            '<div class="info">Creating fresh order...</div>';
+          showResult("info", "Loading fresh product data... 🔄");
 
-          console.log("Using JWT Token:", JWT_TOKEN ? "Present" : "Missing");
+          const response = await fetch(`${API_BASE}/products`);
+          if (response.ok) {
+            const data = await response.json();
+            console.log("✅ Products loaded:", data);
+            showResult(
+              "success",
+              `Loaded ${data.products?.length || 0} products from server! 🎉`
+            );
+          }
+        } catch (error) {
+          console.log("Using cached product data");
+          showResult("info", "Using cached product data 📦");
+        }
+      }
 
-          // Create new order
+      // Product selection with validation
+      function selectProduct(productId, name, price) {
+        // Validate product exists
+        if (!PRODUCTS[productId]) {
+          showResult(
+            "error",
+            "Invalid product selected. Please refresh the page."
+          );
+          return;
+        }
+
+        // Check if item already exists in cart
+        const existingItem = cart.find(
+          (item) => item.productId === productId && item.name === name
+        );
+
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          cart.push({
+            productId: productId,
+            name: name,
+            price: price,
+            quantity: 1,
+          });
+        }
+
+        updateCartDisplay();
+
+        // Success animation
+        const button = event.target;
+        const originalBg = button.style.background;
+        const originalText = button.textContent;
+
+        button.style.background = "#4CAF50";
+        button.textContent = "✅ Added!";
+        button.disabled = true;
+
+        setTimeout(() => {
+          button.style.background = originalBg;
+          button.textContent = originalText;
+          button.disabled = false;
+        }, 1500);
+
+        showResult("success", `${name} added to cart! 🛒`);
+      }
+
+      // Add bundle deal (both t-shirts)
+      function addBundleDeal() {
+        selectProduct("6936db601607ea71b8059c99", "Sweater T-Shirt", 33.45);
+        setTimeout(() => {
+          selectProduct(
+            "6936ddaa1607ea71b8059ca0",
+            "Breatheable T-Shirt",
+            23.78
+          );
+        }, 500);
+
+        showResult("success", "Bundle deal added! 🎉 (Both t-shirts)");
+      }
+
+      // Update cart display
+      function updateCartDisplay() {
+        const cartContainer = document.getElementById("cart-items");
+        const totalContainer = document.getElementById("cart-total");
+        const checkoutBtn = document.getElementById("checkout-btn");
+
+        if (cart.length === 0) {
+          cartContainer.innerHTML = `
+            <p style="color: #999; text-align: center; padding: 40px 0;">
+                Your cart is empty. Add products to get started!
+            </p>
+        `;
+          totalContainer.style.display = "none";
+          checkoutBtn.disabled = true;
+          return;
+        }
+
+        totalAmount = cart.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+
+        cartContainer.innerHTML = cart
+          .map(
+            (item) => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee;">
+            <div>
+                <h4 style="margin: 0;">${item.name}</h4>
+                <p style="margin: 5px 0; color: #666;">₹${item.price} × ${
+              item.quantity
+            }</p>
+                <small style="color: #999;">Stock: ${
+                  PRODUCTS[item.productId]?.stock || "N/A"
+                }</small>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button onclick="updateQuantity('${item.productId}', '${
+              item.name
+            }', -1)" 
+                    style="background: #ff6b6b; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">
+                    -
+                </button>
+                <span style="font-weight: bold; min-width: 20px; text-align: center;">${
+                  item.quantity
+                }</span>
+                <button onclick="updateQuantity('${item.productId}', '${
+              item.name
+            }', 1)" 
+                    style="background: #4CAF50; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">
+                    +
+                </button>
+                <button onclick="removeFromCart('${item.productId}', '${
+              item.name
+            }')" 
+                    style="background: #f44336; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; margin-left: 10px;">
+                    🗑️
+                </button>
+            </div>
+        </div>
+    `
+          )
+          .join("");
+
+        document.getElementById("total-amount").textContent =
+          totalAmount.toFixed(2);
+        totalContainer.style.display = "block";
+        checkoutBtn.disabled = false;
+      }
+
+      // Update item quantity (with stock validation)
+      function updateQuantity(productId, name, change) {
+        const item = cart.find(
+          (item) => item.productId === productId && item.name === name
+        );
+        if (!item) return;
+
+        const newQuantity = item.quantity + change;
+        const availableStock = PRODUCTS[productId]?.stock || 999;
+
+        if (newQuantity <= 0) {
+          removeFromCart(productId, name);
+          return;
+        }
+
+        if (newQuantity > availableStock) {
+          showResult(
+            "error",
+            `Only ${availableStock} items available for ${name}`
+          );
+          return;
+        }
+
+        item.quantity = newQuantity;
+        updateCartDisplay();
+      }
+
+      // Remove item from cart
+      function removeFromCart(productId, name) {
+        cart = cart.filter(
+          (item) => !(item.productId === productId && item.name === name)
+        );
+        updateCartDisplay();
+        showResult("info", `${name} removed from cart`);
+      }
+
+      // Clear entire cart
+      function clearCart() {
+        cart = [];
+        updateCartDisplay();
+        showResult("info", "Cart cleared! 🗑️");
+      }
+
+      // Create order and initiate payment
+      async function createAndPay() {
+        if (cart.length === 0) {
+          showResult("error", "Please add items to cart before checkout");
+          return;
+        }
+
+        try {
+          showResult("info", "Creating your order... 🛒");
+
+          const shippingAddress = {
+            address: document.getElementById("address").value,
+            city: document.getElementById("city").value,
+            postalCode: document.getElementById("postalCode").value,
+            country: document.getElementById("country").value,
+          };
+
+          // Validate shipping address
+          if (
+            !shippingAddress.address ||
+            !shippingAddress.city ||
+            !shippingAddress.postalCode
+          ) {
+            throw new Error("Please fill in all shipping address fields");
+          }
+
+          console.log("🛒 Cart items being sent:", cart);
+
           const orderResponse = await fetch(
             `${API_BASE}/checkout/create-order`,
             {
@@ -82,149 +750,81 @@
                 Authorization: `Bearer ${JWT_TOKEN}`,
               },
               body: JSON.stringify({
-                cartItems: [
-                  {
-                    productId: "6936db601607ea71b8059c99",
-                    quantity: 3,
-                  },
-                  {
-                    productId: "6936ddaa1607ea71b8059ca0",
-                    quantity: 5,
-                  },
-                ],
-                shippingAddress: {
-                  address: "123 Test Street",
-                  city: "Mumbai",
-                  postalCode: "400001",
-                  country: "India",
-                },
+                cartItems: cart,
+                shippingAddress: shippingAddress,
               }),
             }
           );
 
-          console.log("Order response status:", orderResponse.status);
-
           if (!orderResponse.ok) {
             const errorText = await orderResponse.text();
-            console.error("Order creation failed:", errorText);
-            throw new Error(
-              `Order creation failed (${orderResponse.status}): ${errorText}`
-            );
+            console.error("❌ Order creation failed:", errorText);
+            throw new Error(`Order creation failed: ${errorText}`);
           }
 
           const orderData = await orderResponse.json();
-          console.log("✅ Fresh order created:", orderData);
+          console.log("✅ Order created successfully:", orderData);
 
-          document.getElementById("result").innerHTML = `
-                <div class="success">✅ Order Created Successfully!</div>
-                <div class="order-details">
-                    <strong>Razorpay Order ID:</strong> ${orderData.orderId}<br>
-                    <strong>Database Order ID:</strong> ${
-                      orderData.order._id
-                    }<br>
-                    <strong>Amount:</strong> ₹${(
-                      orderData.amount / 100
-                    ).toFixed(2)}<br>
-                    <strong>Receipt:</strong> ${orderData.receipt}
-                </div>
-                <div class="info">Opening payment gateway...</div>
-            `;
+          showResult("success", `Order created successfully! 🎉`);
+          showResult("info", "Opening payment gateway... 💳");
 
-          // Wait a moment then open payment
-          setTimeout(async () => {
-            await openRazorpayPayment(orderData);
-          }, 1000);
+          setTimeout(() => {
+            openRazorpayPayment(orderData);
+          }, 1500);
         } catch (error) {
-          console.error("Error:", error);
-          document.getElementById(
-            "result"
-          ).innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+          console.error("❌ Order creation error:", error);
+          showResult("error", `Error: ${error.message}`);
         }
       }
 
-      async function openRazorpayPayment(orderData) {
-        return new Promise((resolve, reject) => {
-          try {
-            console.log("Opening Razorpay with data:", orderData);
+      // Open Razorpay payment gateway
+      function openRazorpayPayment(orderData) {
+        const options = {
+          key: orderData.key,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          order_id: orderData.orderId,
+          name: "Ecomly Store",
+          description: `Payment for ${cart.length} item(s)`,
+          image:
+            "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiM2NjdlZWEiLz48dGV4dCB4PSI1MCIgeT0iNTUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5FPC90ZXh0Pjwvc3ZnPg==",
+          prefill: {
+            name: orderData.user?.name || "Customer",
+            email: orderData.user?.email || "customer@example.com",
+            contact: orderData.user?.phone || "9999999999",
+          },
+          theme: {
+            color: "#667eea",
+          },
+          handler: function (response) {
+            handlePaymentSuccess(response, orderData);
+          },
+          modal: {
+            ondismiss: function () {
+              showResult("error", "Payment cancelled by user 😔");
+            },
+          },
+        };
 
-            const options = {
-              key: orderData.key,
-              amount: orderData.amount,
-              currency: orderData.currency,
-              order_id: orderData.orderId,
-              name: "Test Store",
-              description: `Payment for ${orderData.receipt}`,
-              prefill: {
-                name: orderData.user?.name || "Test User",
-                email: orderData.user?.email || "test@example.com",
-                contact: orderData.user?.phone || "9999999999",
-              },
-              theme: {
-                color: "#667eea",
-              },
-              handler: function (response) {
-                console.log("Payment successful:", response);
-                handlePaymentSuccess(response);
-                resolve(response);
-              },
-              modal: {
-                ondismiss: function () {
-                  console.log("Payment modal dismissed");
-                  document.getElementById("result").innerHTML =
-                    '<div class="error">Payment cancelled by user</div>';
-                  reject(new Error("Payment cancelled"));
-                },
-              },
-            };
+        const rzp = new Razorpay(options);
 
-            console.log("Razorpay options:", options);
-
-            if (!options.key || !options.amount || !options.order_id) {
-              throw new Error("Invalid Razorpay configuration");
-            }
-
-            if (typeof Razorpay === "undefined") {
-              throw new Error(
-                "Razorpay SDK not loaded. Check internet connection."
-              );
-            }
-
-            const rzp = new Razorpay(options);
-
-            rzp.on("payment.failed", function (response) {
-              console.error("Payment failed:", response.error);
-              document.getElementById("result").innerHTML = `
-                        <div class="error">❌ Payment Failed</div>
-                        <div class="error">Reason: ${response.error.description}</div>
-                        <div class="error">Code: ${response.error.code}</div>
-                    `;
-              reject(response.error);
-            });
-
-            rzp.open();
-          } catch (error) {
-            console.error("Error opening Razorpay:", error);
-            document.getElementById(
-              "result"
-            ).innerHTML = `<div class="error">❌ Razorpay Error: ${error.message}</div>`;
-            reject(error);
-          }
+        rzp.on("payment.failed", function (response) {
+          console.error("❌ Payment failed:", response.error);
+          showResult(
+            "error",
+            `Payment failed: ${response.error.description} 😞`
+          );
         });
+
+        console.log("💳 Opening Razorpay with options:", options);
+        rzp.open();
       }
 
-      async function handlePaymentSuccess(response) {
+      // Handle successful payment
+      async function handlePaymentSuccess(response, orderData) {
         try {
-          document.getElementById("result").innerHTML =
-            '<div class="info">💳 Payment successful! Verifying with server...</div>';
-          console.log("Payment response received:", response);
-
-          const verificationPayload = {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-          };
-
-          console.log("Sending verification data:", verificationPayload);
+          console.log("✅ Payment successful:", response);
+          showResult("info", "Payment successful! Verifying with server... ⏳");
 
           const verifyResponse = await fetch(
             `${API_BASE}/checkout/verify-payment`,
@@ -233,78 +833,171 @@
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify(verificationPayload),
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
             }
           );
 
-          console.log("Verification response status:", verifyResponse.status);
-
           if (!verifyResponse.ok) {
             const errorText = await verifyResponse.text();
-            throw new Error(
-              `Verification request failed: ${verifyResponse.status} - ${errorText}`
-            );
+            console.error("❌ Verification failed:", errorText);
+            throw new Error("Payment verification failed");
           }
 
           const verifyData = await verifyResponse.json();
-          console.log("Verification result:", verifyData);
+          console.log("✅ Payment verified:", verifyData);
 
           if (verifyData.success) {
-            document.getElementById("result").innerHTML = `
-                    <div class="success">
-                        <h4>🎉 Payment Completed Successfully!</h4>
-                        <div class="order-details">
-                            <strong>Order ID:</strong> ${
-                              verifyData.order._id
-                            }<br>
-                            <strong>Payment ID:</strong> ${
-                              response.razorpay_payment_id
-                            }<br>
-                            <strong>Status:</strong> ${
-                              verifyData.order.status
-                            }<br>
-                            <strong>Amount:</strong> ₹${
-                              verifyData.order.totalPrice
-                            }<br>
-                            <strong>Email Sent:</strong> ${
-                              verifyData.emailSent ? "✅ Yes" : "❌ No"
-                            }
-                        </div>
-                    </div>
-                `;
+            showResult("success", "Payment verified successfully! 🎉");
+
+            // Show success screen
+            setTimeout(() => {
+              showSuccessScreen(verifyData, response);
+            }, 2000);
           } else {
-            document.getElementById("result").innerHTML = `
-                    <div class="error">❌ Payment Verification Failed</div>
-                    <div class="error">Reason: ${verifyData.message}</div>
-                `;
+            throw new Error(verifyData.message || "Verification failed");
           }
         } catch (error) {
-          console.error("Verification error:", error);
-          document.getElementById("result").innerHTML = `
-                <div class="error">❌ Verification Error: ${error.message}</div>
-                <div class="error">Please check console for details</div>
-            `;
+          console.error("❌ Verification error:", error);
+          showResult("error", `Verification failed: ${error.message}`);
+        }
+      }
+
+      // Show success screen
+      function showSuccessScreen(verifyData, paymentResponse) {
+        document.getElementById("checkout-screen").style.display = "none";
+        document.getElementById("home-screen").style.display = "block";
+
+        // Create detailed order summary
+        const orderItems = cart
+          .map(
+            (item) => `
+        <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee;">
+            <span>${item.name} x${item.quantity}</span>
+            <span>₹${(item.price * item.quantity).toFixed(2)}</span>
+        </div>
+    `
+          )
+          .join("");
+
+        document.getElementById("order-summary").innerHTML = `
+        <h3 style="color: #4CAF50; margin-bottom: 15px;">📋 Order Confirmed</h3>
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+            <h4 style="margin: 0 0 10px 0; color: #333;">Order Items:</h4>
+            ${orderItems}
+            <div style="font-weight: bold; padding-top: 10px; margin-top: 10px; border-top: 2px solid #667eea;">
+                Total: ₹${totalAmount.toFixed(2)}
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: auto 1fr; gap: 10px 20px; text-align: left; margin-top: 15px;">
+            <strong>Order ID:</strong> <span>${verifyData.order._id}</span>
+            <strong>Payment ID:</strong> <span>${
+              paymentResponse.razorpay_payment_id
+            }</span>
+            <strong>Status:</strong> <span style="color: #4CAF50;">✅ ${
+              verifyData.order.status
+            }</span>
+            <strong>Email:</strong> <span>${
+              verifyData.emailSent ? "✅ Sent" : "❌ Failed"
+            }</span>
+        </div>
+    `;
+
+        // Start countdown
+        startCountdown();
+
+        // Clear cart after successful order
+        cart = [];
+        totalAmount = 0;
+      }
+
+      // Countdown timer
+      function startCountdown() {
+        let timeLeft = 10;
+        const timerElement = document.getElementById("countdown-timer");
+
+        const timer = setInterval(() => {
+          if (timerElement) {
+            timerElement.textContent = timeLeft;
+          }
+          timeLeft--;
+
+          if (timeLeft < 0) {
+            clearInterval(timer);
+            continueShopping();
+          }
+        }, 1000);
+      }
+
+      // Navigation functions
+      function continueShopping() {
+        document.getElementById("home-screen").style.display = "none";
+        document.getElementById("checkout-screen").style.display = "block";
+        updateCartDisplay();
+        showResult("success", "Welcome back! Add more items to cart 🛍️");
+      }
+
+      function viewOrders() {
+        showResult("info", "Orders page would open here 📋");
+        // In real app: window.location.href = '/orders';
+      }
+
+      function shareOrder() {
+        if (navigator.share) {
+          navigator.share({
+            title: "I just made a purchase on Ecomly Store!",
+            text: `Check out this amazing store: ₹${totalAmount.toFixed(
+              2
+            )} worth of products!`,
+            url: window.location.href,
+          });
+        } else {
+          showResult("info", "Share functionality would open here 🔗");
+        }
+      }
+
+      // Utility functions
+      function showResult(type, message) {
+        const resultDiv = document.getElementById("result");
+        resultDiv.className = type;
+        resultDiv.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">
+                ${type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️"}
+            </span>
+            <span>${message}</span>
+        </div>
+    `;
+
+        // Auto-hide info messages
+        if (type === "info") {
+          setTimeout(() => {
+            if (resultDiv.className === "info") {
+              resultDiv.innerHTML = "";
+            }
+          }, 5000);
         }
       }
 
       // Test server connection
-      window.onload = async function () {
+      async function testServerConnection() {
         try {
           const response = await fetch(`${API_BASE}/products`);
           if (response.ok) {
-            console.log("✅ Server connection OK");
-            document.getElementById("result").innerHTML =
-              '<div class="success">🌐 Server connection successful. Ready to create order!</div>';
+            showResult("success", "🌐 Server connected! Ready for shopping.");
           } else {
             throw new Error(`Server responded with status: ${response.status}`);
           }
         } catch (error) {
-          console.error("Connection test failed:", error);
-          document.getElementById("result").innerHTML = `
-                <div class="error">❌ Server connection failed. Make sure your server is running on http://localhost:3000</div>
-            `;
+          showResult(
+            "error",
+            "❌ Server connection failed. Please check if the server is running."
+          );
         }
-      };
+      }
     </script>
   </body>
 </html>

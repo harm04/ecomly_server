@@ -7,6 +7,5 @@ router.post("/verify-payment", checkoutController.verifyPayment);
 router.post("/payment-failure", checkoutController.paymentFailure);
 router.get("/order/:orderId", checkoutController.getOrder);
 
-// Add this to your checkout_routes.js
-router.get("/debug-orders", checkoutController.debugOrders);
+
 module.exports = router;
